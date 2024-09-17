@@ -90,7 +90,7 @@ trait Jetton with Ownable {
     // @to The Address receive the Jetton token after minting
     // @amount The amount of Jetton token being minted
     // @response_destination The previous owner address
-    fun mint(to: Address, amount: Int, response_destination: Address) {
+    fun mint(to: Address, amount: Int, response_destination: Address?) {
         require(self.totalSupply + amount <= self.max_supply, "The total supply will be overlapping.");
         self.totalSupply = self.totalSupply + amount; // Update total supply
 
@@ -223,9 +223,9 @@ contract JettonDefaultWallet {
         }
 
         // 0xd53276db -- Cashback to the original Sender
-        if (msg.response_destination != null) { 
+        if (msg.response_destination != null) {
             send(SendParameters {
-                to: msg.response_destination, 
+                to: msg.response_destination!!, 
                 value: msgValue,  
                 bounce: false,
                 body: TokenExcesses { 
@@ -262,11 +262,11 @@ contract JettonDefaultWallet {
     }
 
     get fun msgValue(value: Int): Int {
-        let msgValue: Int = value;
-        let tonBalanceBeforeMsg: Int = myBalance() - msgValue;
+        let calculatedMsgValue: Int = value;
+        let tonBalanceBeforeMsg: Int = myBalance() - calculatedMsgValue;
         let storageFee: Int = self.minTonsForStorage - min(tonBalanceBeforeMsg, self.minTonsForStorage);
-        msgValue = msgValue - (storageFee + self.gasConsumption);
-        return msgValue;
+        calculatedMsgValue = calculatedMsgValue - (storageFee + self.gasConsumption);
+        return calculatedMsgValue;
     }
 
     bounced(src: bounced<TokenTransferInternal>) {
@@ -308,7 +308,7 @@ message(0x178d4519) TokenTransferInternal {
     queryId: Int as uint64;
     amount: Int as coins;
     from: Address;
-    response_destination: Address;
+    response_destination: Address?;
     forward_ton_amount: Int as coins;
     forward_payload: Slice as remaining; // Comment Text message when Transfer the jetton
 }

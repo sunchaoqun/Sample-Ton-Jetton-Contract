@@ -5,16 +5,16 @@ import { buildOnchainMetadata } from '../utils/jetton-helpers';
 
 export async function run(provider: NetworkProvider) {
     const jettonParams = {
-        name: "Nikandr Token",
-        description: "Official token of the Nikandr Surkov Youtube channel :) https://www.youtube.com/@NikandrSurkov",
-        symbol: "NIKANDR",
-        image: "https://violet-traditional-rabbit-103.mypinata.cloud/ipfs/QmUgZ3kWg36tCVSZeVKXkvsdXkn6dqigqjoBZto9Y8h37z",
+        name: "Bitcoin Cash",
+        description: "Low fee peer-to-peer electronic cash alternative to Bitcoin",
+        symbol: "BCH",
+        image: "https://lime-biological-possum-658.mypinata.cloud/ipfs/QmWdriCtshQczjAZjKBzXiTsgRKXYCzebmeD8AFMER3Ey4",
     };
 
     // Create content Cell
     let content = buildOnchainMetadata(jettonParams);
 
-    const sampleJetton = provider.open(await SampleJetton.fromInit(provider.sender().address as Address, content, 1000000000000000000n));
+    const sampleJetton = provider.open(await SampleJetton.fromInit(provider.sender().address as Address, content, 21000000000000000n));
 
     await sampleJetton.send(
         provider.sender(),
@@ -23,7 +23,7 @@ export async function run(provider: NetworkProvider) {
         },
         {
             $$type: 'Mint',
-            amount: 100000000000000000n,
+            amount: 21000000000000000n,
             receiver: provider.sender().address as Address
         }
     );
